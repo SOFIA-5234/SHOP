@@ -1,0 +1,27 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { ShopProvider } from '../context/ShopContext';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'SOFIA SHOP - บริการดิจิทัลพรีเมียมอันดับ 1 ในไทย',
+  description: 'บริการสตรีมมิ่ง คอร์สเรียนออนไลน์ AI Tools ลิขสิทธิ์แท้ส่งไวใน 1 นาที',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="th" className="dark scroll-smooth">
+      <body className={`${inter.className} bg-[#030014] text-slate-100 antialiased`}>
+        <ShopProvider>
+          {children}
+        </ShopProvider>
+      </body>
+    </html>
+  );
+}

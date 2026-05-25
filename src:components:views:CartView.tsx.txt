@@ -1,0 +1,86 @@
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ShoppingBag, Trash2 } from 'lucide-react';
+import { useShop } from '../../context/ShopContext';
+
+export default function CartView() {
+  const { cart, removeFromCart, couponCode, setCouponCode, applyCoupon, activeDiscount, getCartTotal, createOrder, setCurrentPage } = useShop();
+
+  const handleApply = () => {
+    if (applyCoupon()) {
+      alert('ใช้งานโค้ดส่วนลด 50% เรียบร้อย!');
+    } else {
+      alert('ไม่พบคูปองนี้');
+    }
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-8">
+      <h1 className="text-3xl font-extrabold">ตะกร้าสินค้า</h1>
+
+      {cart.length === 0 ? (
+        <div className="text-center py-20 rounded-3xl bg-white/[0.01] border border-white/5 space-y-6">
+          <ShoppingBag className="w-16 h-16 text-slate-600 mx-auto" />
+          <h3 className="text-xl font-bold text-slate-400">ตะกร้าของคุณยังว่างอยู่</h3>
+          <button onClick={() => setCurrentPage('shop')} className="px-6 py-3 rounded-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+            ไปช้อปกันเลย
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+            {cart.map((item, idx) => (
+              <div key={idx} className="flex items-center justify-between p-6 rounded-3xl bg-white/[0.02] border border-white/5">
+                <div className="flex items-center gap-4">
+                  <span className="text-4xl">{item.product.image}</span>
+                  <div>
+                    <h3 className="font-bold text-white">{item.product.name}</h3>
+                    <p className="text-xs text-slate-400">{item.plan}</p>
+                    <span className="text-sm font-bold text-pink-400">฿{item.product.price}</span>
+                  </div>
+                </div>
+                <button onClick={() => removeFromCart(item.product.id, item.plan)} className="p-2 rounded-xl bg-red-500/10 text-red-400">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-6 h-fit">
+            <h3 className="text-lg font-bold">สรุปคำสั่งซื้อ</h3>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="รหัสส่วนลด (SOFIA50)" 
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="flex-1 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs focus:outline-none"
+              />
+              <button onClick={handleApply} className="px-4 py-2 rounded-xl bg-purple-600/20 text-purple-300 text-xs">
+                ใช้โค้ด
+              </button>
+            </div>
+
+            <div className="space-y-2 text-sm border-t border-white/5 pt-4">
+              <div className="flex justify-between text-slate-400">
+                <span>ยอดรวม</span>
+                <span>฿{cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)}</span>
+              </div>
+              {activeDiscount && <div className="text-emerald-400 text-xs text-right">ส่วนลด {activeDiscount.percent}%</div>}
+              <div className="flex justify-between font-black text-white text-lg pt-2 border-t border-white/5">
+                <span>ยอดชำระสุทธิ</span>
+                <span className="text-pink-500">฿{getCartTotal()}</span>
+              </div>
+            </div>
+
+            <button onClick={createOrder} className="w-full py-4 rounded-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+              ชำระเงิน
+            </button>
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}

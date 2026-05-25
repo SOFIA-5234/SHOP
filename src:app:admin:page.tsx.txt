@@ -1,0 +1,147 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useShop } from '../../context/ShopContext';
+import { Check, X, ShieldCheck, Database, LayoutDashboard, Trash } from 'lucide-react';
+import Link from 'next/link';
+
+export default function AdminPage() {
+  const { products, setProducts, orders, setOrders } = useShop();
+  const [newProduct, setNewProduct] = useState({ name: '', price: 0, originalPrice: 0, category: 'Streaming', description: '', image: '📦' });
+
+  const verifyingOrders = orders.filter(o => o.status === 'verifying');
+
+  const approveOrder = (orderId: string) => {
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'completed' } : o));
+    alert('อนุมัติยอดโอนและส่งสินค้าพรีเมียมให้ลูกค้าสำเร็จ!');
+  };
+
+  const rejectOrder = (orderId: string) => {
+    setOrders(prev => prev.filter(o => o.id !== orderId));
+    alert('ปฏิเสธออเดอร์แล้ว');
+  };
+
+  const addProduct = () => {
+    if (!newProduct.name || !newProduct.price) return;
+    const item = {
+      id: newProduct.name.toLowerCase().replace(/\s+/g, '-'),
+      name: newProduct.name,
+      category: newProduct.category,
+      price: newProduct.price,
+      originalPrice: newProduct.originalPrice || 299,
+      badge: 'มาใหม่',
+      image: newProduct.image,
+      description: newProduct.description,
+      details: ['การรับประกันและสิทธิ์ช่วยเหลือการเข้าใช้งาน']
+    };
+    setProducts(prev => [...prev, item]);
+    setNewProduct({ name: '', price: 0, originalPrice: 0, category: 'Streaming', description: '', image: '📦' });
+    alert('บันทึกสินค้าใหม่แล้ว');
+  };
+
+  return (
+    <div className="bg-[#030014] text-slate-100 min-h-screen p-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        
+        <div className="flex justify-between items-center border-b border-white/5 pb-6">
+          <div className="space-y-1">
+            <Link href="/" className="text-xs text-slate-400 hover:text-white">← ย้อนกลับหน้าร้าน</Link>
+            <h1 className="text-2xl font-black text-white flex items-center gap-2">
+              <LayoutDashboard className="text-purple-400" />
+              แผงจัดการผู้ดูแลระบบ (Admin)
+            </h1>
+          </div>
+          <span className="px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full text-red-400 text-xs">Admin Console</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <div className="space-y-6">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <ShieldCheck className="text-pink-500" /> คิวรอตรวจสอบสลิป ({verifyingOrders.length})
+            </h3>
+            {verifyingOrders.length === 0 ? (
+              <p className="text-xs text-slate-500 p-6 bg-white/[0.01] rounded-2xl border border-white/5">ไม่มีประวัติยอดค้างชำระ</p>
+            ) : (
+              <div className="space-y-3">
+                {verifyingOrders.map(order => (
+                  <div key={order.id} className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex justify-between items-center">
+                    <div>
+                      <p className="text-xs font-mono font-bold text-white">รหัส {order.id}</p>
+                      <p className="text-xs text-pink-400 font-bold">฿{order.totalPrice}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => approveOrder(order.id)} className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                        <Check className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => rejectOrder(order.id)} className="p-2 rounded-xl bg-red-500/10 text-red-400">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 bg-white/[0.01] border border-white/5 rounded-3xl space-y-4">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <Database className="text-purple-400" /> เพิ่มสินค้าใหม่
+            </h3>
+            <div className="space-y-3 text-xs">
+              <input 
+                type="text" 
+                placeholder="ชื่อบริการดิจิทัล" 
+                value={newProduct.name}
+                onChange={e => setNewProduct({...newProduct, name: e.target.value})}
+                className="w-full p-2.5 rounded-xl bg-white/5 border border-white/10 text-white" 
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <input 
+                  type="number" 
+                  placeholder="ราคาขาย" 
+                  value={newProduct.price || ''}
+                  onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
+                  className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white" 
+                />
+                <input 
+                  type="number" 
+                  placeholder="ราคาเต็มอ้างอิง" 
+                  value={newProduct.originalPrice || ''}
+                  onChange={e => setNewProduct({...newProduct, originalPrice: parseFloat(e.target.value)})}
+                  className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white" 
+                />
+              </div>
+              <input 
+                type="text" 
+                placeholder="รายละเอียดสั้นๆ" 
+                value={newProduct.description}
+                onChange={e => setNewProduct({...newProduct, description: e.target.value})}
+                className="w-full p-2.5 rounded-xl bg-white/5 border border-white/10 text-white" 
+              />
+              <button onClick={addProduct} className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold">
+                เพิ่มสินค้าวางขาย
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div className="p-6 bg-white/[0.01] border border-white/5 rounded-3xl space-y-4">
+          <h3 className="font-bold text-white">รายการคลังสินค้า</h3>
+          <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+            {products.map(p => (
+              <div key={p.id} className="p-3 bg-white/[0.02] border border-white/5 rounded-xl flex justify-between items-center text-xs">
+                <span>{p.image} {p.name} - ฿{p.price}</span>
+                <button onClick={() => setProducts(products.filter(item => item.id !== p.id))} className="text-red-400">
+                  <Trash className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,52 @@
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useShop } from '../../context/ShopContext';
+
+export default function LoginView() {
+  const { userEmail, setUserEmail, setIsLoggedIn, setCurrentPage } = useShop();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggedIn(true);
+    setCurrentPage('home');
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md mx-auto py-12">
+      <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-6">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-black">เข้าสู่ระบบ</h2>
+          <p className="text-xs text-slate-400">สำหรับจัดการข้อมูลประวัติและดูออเดอร์ทั้งหมด</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input 
+            type="email" 
+            required 
+            placeholder="อีเมลของคุณ" 
+            value={userEmail}
+            onChange={(e) => setUserEmail(e.target.value)}
+            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-200 focus:outline-none" 
+          />
+          <input 
+            type="password" 
+            required 
+            placeholder="รหัสผ่าน" 
+            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-200 focus:outline-none" 
+          />
+          <button type="submit" className="w-full py-3 rounded-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+            ล็อกอินเข้าสู่ระบบ
+          </button>
+        </form>
+        <button 
+          onClick={() => { setIsLoggedIn(true); setUserEmail('guest@sofia.com'); setCurrentPage('home'); }} 
+          className="w-full text-center text-xs text-pink-400 hover:underline"
+        >
+          เข้าใช้งานแบบผู้ใช้ทั่วไป
+        </button>
+      </div>
+    </motion.div>
+  );
+}

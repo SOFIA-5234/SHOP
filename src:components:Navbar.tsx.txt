@@ -1,0 +1,81 @@
+'use client';
+
+import React from 'react';
+import { ShoppingBag, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
+import { useShop } from '../context/ShopContext';
+import Link from 'next/link';
+
+export default function Navbar() {
+  const { currentPage, setCurrentPage, setCategoryFilter, cart, isLoggedIn, setIsLoggedIn, userEmail, setUserEmail } = useShop();
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  return (
+    <>
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-[#030014]/75 border-b border-white/5 py-4 px-6 md:px-12 transition-all">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          
+          <div onClick={() => setCurrentPage('home')} className="flex items-center gap-2 cursor-pointer group">
+            <span className="text-2xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-indigo-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+              SOFIA SHOP
+            </span>
+            <div className="h-2 w-2 rounded-full bg-pink-500 animate-ping"></div>
+          </div>
+
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+            <button onClick={() => setCurrentPage('home')} className={`hover:text-pink-400 transition-colors ${currentPage === 'home' ? 'text-pink-400' : ''}`}>หน้าแรก</button>
+            <button onClick={() => { setCurrentPage('shop'); setCategoryFilter('All'); }} className={`hover:text-pink-400 transition-colors ${currentPage === 'shop' ? 'text-pink-400' : ''}`}>สินค้าทั้งหมด</button>
+            <button onClick={() => setCurrentPage('contact')} className={`hover:text-pink-400 transition-colors ${currentPage === 'contact' ? 'text-pink-400' : ''}`}>ติดต่อเรา</button>
+            <button onClick={() => setCurrentPage('faq')} className={`hover:text-pink-400 transition-colors ${currentPage === 'faq' ? 'text-pink-400' : ''}`}>คำถามที่พบบ่อย</button>
+            
+            <Link href="/admin" className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 transition-all text-xs">
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              แอดมินแดชบอร์ด
+            </Link>
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setCurrentPage('cart')} 
+              className="relative p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:border-pink-500/40 hover:shadow-[0_0_15px_rgba(236,72,153,0.15)] transition-all"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
+            {isLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <span className="hidden lg:inline text-xs text-slate-400 font-mono">{userEmail}</span>
+                <button 
+                  onClick={() => { setIsLoggedIn(false); setUserEmail(''); setCurrentPage('home'); }} 
+                  className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all"
+                  title="ออกจากระบบ"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setCurrentPage('login')} 
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/20 hover:shadow-pink-500/30 transition-all duration-300"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>เข้าสู่ระบบ</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <div className="md:hidden flex justify-around border-b border-white/5 bg-[#030014]/90 py-3 text-xs text-slate-400 font-medium">
+        <button onClick={() => setCurrentPage('home')} className={currentPage === 'home' ? 'text-pink-400' : ''}>หน้าแรก</button>
+        <button onClick={() => { setCurrentPage('shop'); setCategoryFilter('All'); }} className={currentPage === 'shop' ? 'text-pink-400' : ''}>สินค้าทั้งหมด</button>
+        <button onClick={() => setCurrentPage('contact')} className={currentPage === 'contact' ? 'text-pink-400' : ''}>ติดต่อ</button>
+        <button onClick={() => setCurrentPage('faq')} className={currentPage === 'faq' ? 'text-pink-400' : ''}>คำถาม</button>
+      </div>
+    </>
+  );
+}

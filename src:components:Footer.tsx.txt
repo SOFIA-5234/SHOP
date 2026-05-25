@@ -1,0 +1,48 @@
+'use client';
+
+import React from 'react';
+import { useShop } from '../context/ShopContext';
+
+export default function Footer() {
+  const { setCurrentPage, setCategoryFilter } = useShop();
+
+  return (
+    <footer className="border-t border-white/5 bg-[#030014]/60 py-12 px-6 mt-12 text-slate-500 text-xs">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="space-y-4">
+          <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">SOFIA SHOP</span>
+          <p className="leading-relaxed text-slate-400">
+            ผู้บุกเบิกและผู้จัดจำหน่ายบริการด้านดิจิทัล บัญชีพรีเมียม ลิขสิทธิ์แท้ และแพ็คเกจเสริมด้านความบันเทิงระดับแนวหน้าของเอเชีย
+          </p>
+        </div>
+        <div>
+          <h4 className="font-bold text-slate-300 mb-3 text-sm">สินค้าบริการหลัก</h4>
+          <ul className="space-y-2">
+            <li><button onClick={() => { setCurrentPage('shop'); setCategoryFilter('Streaming'); }} className="hover:text-pink-400 transition-colors">แชร์หน้าจอ Netflix 4K</button></li>
+            <li><button onClick={() => { setCurrentPage('shop'); setCategoryFilter('Streaming'); }} className="hover:text-pink-400 transition-colors">YouTube Premium ไร้โฆษณา</button></li>
+            <li><button onClick={() => { setCurrentPage('shop'); setCategoryFilter('Design'); }} className="hover:text-pink-400 transition-colors">เครื่องมือ Canva Pro</button></li>
+            <li><button onClick={() => { setCurrentPage('shop'); setCategoryFilter('AI Tools'); }} className="hover:text-pink-400 transition-colors">ChatGPT Plus (GPT-4o)</button></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-bold text-slate-300 mb-3 text-sm">การเชื่อมโยงระบบ</h4>
+          <ul className="space-y-2">
+            <li><button onClick={() => setCurrentPage('home')} className="hover:text-pink-400 transition-colors">หน้าแรกระบบ</button></li>
+            <li><button onClick={() => setCurrentPage('tracking')} className="hover:text-pink-400 transition-colors">ตรวจสอบประวัติการซื้อ</button></li>
+            <li><button onClick={() => setCurrentPage('contact')} className="hover:text-pink-400 transition-colors">ศูนย์บริการลูกค้า</button></li>
+            <li><button onClick={() => setCurrentPage('faq')} className="hover:text-pink-400 transition-colors">วิธีสแกนโอนเงิน</button></li>
+          </ul>
+        </div>
+        <div className="space-y-3">
+          <h4 className="font-bold text-slate-300 text-sm">สำนักงานพัฒนาซอฟต์แวร์</h4>
+          <p className="leading-relaxed">
+            อาคารวิลล่าซอฟต์ ชั้น 28 ถนนเพชรบุรี ราชเทวี กรุงเทพมหานคร 10400
+          </p>
+          <div className="text-[10px] text-slate-600">
+            © 2026 SOFIA SHOP Digital Service Inc. All Rights Reserved.
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
